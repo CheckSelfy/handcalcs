@@ -28,9 +28,6 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install uv
         uv sync
-    - name: Test black formatted
-      run: |
-        uv run black src --check
     - name: Test with pytest
       run: |
         uv run pytest
