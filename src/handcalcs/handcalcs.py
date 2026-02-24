@@ -1677,7 +1677,11 @@ def format_param_line(line: ParameterLine, **config_options) -> ParameterLine:
         latex_code = latex_code.replace("=", ampersand_sign + "=")
     else:  # To handle sympy symbols displayed alone
         latex_code = latex_code.replace(" ", comment_space)
-    comment = format_strings(line.comment, comment=True, **config_options)
+    comment_space = ""
+    comment = ""
+    if line.comment:
+        comment_space = config_options["comment_space"]
+        comment = format_strings(line.comment, comment=True, **config_options)
     line.latex = f"{latex_code} {comment_space} {comment}{line_break}"
     return line
 
@@ -1687,8 +1691,11 @@ def format_symbolic_line(line: SymbolicLine, **config_options) -> SymbolicLine:
     latex_code = line.latex
     ampersand_sign = config_options["ampersand_sign"]
     latex_code = latex_code.replace("=", ampersand_sign + "=")
-    comment_space = config_options["comment_space"]
-    comment = format_strings(line.comment, comment=True, **config_options)
+    comment_space = ""
+    comment = ""
+    if line.comment:
+        comment_space = config_options["comment_space"]
+        comment = format_strings(line.comment, comment=True, **config_options)
     line.latex = f"{latex_code} {comment_space} {comment}\n"
     return line
 

@@ -4,8 +4,10 @@
 ```py
 import importlib
 import sys
-if os.pathdir.isdir("handcalcs"):
+import os
+if not os.path.isdir("handcalcs"):
   !git clone https://github.com/CheckSelfy/handcalcs.git
+  !pip install -r handcalcs/requirements.txt
 MODULE_PATH = "handcalcs/src/handcalcs/__init__.py"
 MODULE_NAME = "handcalcs"
 
