@@ -24,12 +24,14 @@ handcalcs.set_option("latex_block_end", "")
 handcalcs.set_option("math_environment_start", "")
 handcalcs.set_option("math_environment_end", "")
 handcalcs.set_option("line_break", "")
-handcalcs.set_option("math_default_functions_start", "\\mathrm{")
-handcalcs.set_option("math_default_functions_end", "}")
-handcalcs.set_option("text_env_start", "\\mathrm{")
-handcalcs.set_option("text_env_end", "}")
+handcalcs.set_option("math_default_functions_start", "\\mathrm{\"")
+handcalcs.set_option("math_default_functions_end", "\"}")
+handcalcs.set_option("text_env_start", "\\mathrm{\"")
+handcalcs.set_option("text_env_end", "\"}")
 handcalcs.set_option("comment_space", "\\;")
 handcalcs.set_option("ampersand_sign", "")
+handcalcs.set_option("since_text", "Так как ")
+handcalcs.set_option("since_text_then", ", то")
 ```
 
 <p>

@@ -18,5 +18,8 @@
     "preferred_string_formatter": "L",
     "custom_symbols": {},
     "custom_brackets": {},
-    "ampersand_sign": "&"
+    "ampersand_sign": "&",
+    "since_text": "Since, ",
+    "since_text_then": "then"
+
 }

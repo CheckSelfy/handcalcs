@@ -1619,8 +1619,11 @@ def format_conditional_line(line: ConditionalLine, **config_options) -> Conditio
     """
     if line.true_condition:
         latex_condition = " ".join(line.true_condition)
-        a = "{"
-        b = "}"
+        text_env_start = config_options["text_env_start"]
+        text_env_end = config_options["text_env_end"]
+        since_text = config_options["since_text"]
+        since_text_then = config_options["since_text_then"]
+        ampersand_sign = config_options["ampersand_sign"]
         comment_space = ""
         comment = ""
         if line.comment:
@@ -1628,7 +1631,7 @@ def format_conditional_line(line: ConditionalLine, **config_options) -> Conditio
             comment = format_strings(line.comment, comment=True, **config_options)
 
         line_break = f"{config_options['line_break']}\n"
-        first_line = f"&\\text{a}Since, {b} {latex_condition} : {comment_space} {comment} {line_break}"
+        first_line = f"{ampersand_sign}{text_env_start}{since_text}{text_env_end} {latex_condition} {text_env_start}{since_text_then}{text_env_end} : {comment_space} {comment} {line_break}"
         if line.condition_type == "else":
             first_line = ""
         line.latex_condition = first_line
