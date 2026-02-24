@@ -1,3 +1,35 @@
+> [!NOTE]
+> This fork goal: make calculations port to MS Word easier. You should have MS Word that have LATEX compatibitility. 
+> As far as I don't know how to use pip, I usually use next snippet to import this forked module
+```py
+import importlib
+import sys
+if os.pathdir.isdir("handcalcs"):
+  !git clone https://github.com/CheckSelfy/handcalcs.git
+MODULE_PATH = "handcalcs/src/handcalcs/__init__.py"
+MODULE_NAME = "handcalcs"
+
+spec = importlib.util.spec_from_file_location(MODULE_NAME, MODULE_PATH)
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module 
+spec.loader.exec_module(module)
+
+import handcalcs.render
+
+# word settings
+handcalcs.set_option("latex_block_start", "")
+handcalcs.set_option("latex_block_end", "")
+handcalcs.set_option("math_environment_start", "")
+handcalcs.set_option("math_environment_end", "")
+handcalcs.set_option("line_break", "")
+handcalcs.set_option("math_default_functions_start", "\\mathrm{")
+handcalcs.set_option("math_default_functions_end", "}")
+handcalcs.set_option("text_env_start", "\\mathrm{")
+handcalcs.set_option("text_env_end", "}")
+handcalcs.set_option("comment_space", "\\;")
+handcalcs.set_option("ampersand_sign", "")
+```
+
 <p>
 <a href='https://coveralls.io/github/connorferster/handcalcs?branch=master'><img src='https://coveralls.io/repos/github/connorferster/handcalcs/badge.svg?branch=master' alt='Coverage Status' /></a>
   <img src="https://img.shields.io/badge/code%20style-black-000000.svg">

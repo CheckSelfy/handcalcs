@@ -862,8 +862,8 @@ def format_parameters_cell(cell: ParameterCell, **config_options):
         config_options["use_scientific_notation"], cell.scientific_notation
     )
     opener = config_options["latex_block_start"]
-    begin = f"\\begin{{{config_options['math_environment_start']}}}"
-    end = f"\\end{{{config_options['math_environment_end']}}}"
+    begin = config_options['math_environment_start']
+    end = config_options['math_environment_end']
     closer = config_options["latex_block_end"]
     line_break = f"{config_options['line_break']}\n"
     cycle_cols = itertools.cycle(range(1, cols + 1))
@@ -878,10 +878,11 @@ def format_parameters_cell(cell: ParameterCell, **config_options):
             outgoing = deque([])
             for expr in line.true_expressions:
                 current_col = next(cycle_cols)
+                ampersand_sign = config_options["ampersand_sign"]
                 if current_col % cols == 0:
-                    outgoing.append("&" + expr + line_break)
+                    outgoing.append(ampersand_sign + expr + line_break)
                 elif current_col % cols != 1:
-                    outgoing.append("&" + expr)
+                    outgoing.append(ampersand_sign + expr)
                 else:
                     outgoing.append(expr)
             line.latex_expressions = " ".join(outgoing)
@@ -890,10 +891,11 @@ def format_parameters_cell(cell: ParameterCell, **config_options):
             latex_param = line.latex
 
             current_col = next(cycle_cols)
+            ampersand_sign = config_options["ampersand_sign"]
             if current_col % cols == 0:
-                line.latex = "&" + latex_param + line_break
+                line.latex = ampersand_sign + latex_param + line_break
             elif current_col % cols != 1:
-                line.latex = "&" + latex_param
+                line.latex = ampersand_sign + latex_param
             else:
                 line.latex = latex_param
 
@@ -924,14 +926,12 @@ def format_calc_cell(cell: CalcCell, **config_options) -> str:
         incoming.append(line)
     cell.lines = incoming
 
-    latex_block = line_break.join([line.latex for line in cell.lines if line.latex])
+    latex_block = line_break.join([line.latex.strip() for line in cell.lines if line.latex])
     opener = config_options["latex_block_start"]
-    begin = f"\\begin{{{config_options['math_environment_start']}}}"
-    end = f"\\end{{{config_options['math_environment_end']}}}"
+    begin = config_options['math_environment_start']
+    end = config_options['math_environment_end']
     closer = config_options["latex_block_end"]
-    cell.latex_code = "\n".join([opener, begin, latex_block, end, closer]).replace(
-        "\n" + end, end
-    )
+    cell.latex_code = "\n".join(x for x in [opener, begin, latex_block, end, closer] if x)
     return cell
 
 
@@ -954,14 +954,12 @@ def format_shortcalc_cell(cell: ShortCalcCell, **config_options) -> str:
         incoming.append(line)
     cell.lines = incoming
 
-    latex_block = line_break.join([line.latex for line in cell.lines if line.latex])
+    latex_block = line_break.join([line.latex.strip() for line in cell.lines if line.latex])
     opener = config_options["latex_block_start"]
-    begin = f"\\begin{{{config_options['math_environment_start']}}}"
-    end = f"\\end{{{config_options['math_environment_end']}}}"
+    begin = config_options['math_environment_start']
+    end = config_options['math_environment_end']
     closer = config_options["latex_block_end"]
-    cell.latex_code = "\n".join([opener, begin, latex_block, end, closer]).replace(
-        "\n" + end, end
-    )
+    cell.latex_code = "\n".join(x for x in [opener, begin, latex_block, end, closer] if x)
     return cell
 
 
@@ -985,14 +983,12 @@ def format_longcalc_cell(cell: LongCalcCell, **config_options) -> str:
         incoming.append(line)
     cell.lines = incoming
 
-    latex_block = line_break.join([line.latex for line in cell.lines if line.latex])
+    latex_block = line_break.join([line.latex.strip() for line in cell.lines if line.latex])
     opener = config_options["latex_block_start"]
-    begin = f"\\begin{{{config_options['math_environment_start']}}}"
-    end = f"\\end{{{config_options['math_environment_end']}}}"
+    begin = config_options['math_environment_start']
+    end = config_options['math_environment_end']
     closer = config_options["latex_block_end"]
-    cell.latex_code = "\n".join([opener, begin, latex_block, end, closer]).replace(
-        "\n" + end, end
-    )
+    cell.latex_code = "\n".join(x for x in [opener, begin, latex_block, end, closer] if x)
     return cell
 
 
@@ -1015,14 +1011,12 @@ def format_symbolic_cell(cell: SymbolicCell, **config_options) -> str:
         incoming.append(line)
     cell.lines = incoming
 
-    latex_block = line_break.join([line.latex for line in cell.lines if line.latex])
+    latex_block = line_break.join([line.latex.strip() for line in cell.lines if line.latex])
     opener = config_options["latex_block_start"]
-    begin = f"\\begin{{{config_options['math_environment_start']}}}"
-    end = f"\\end{{{config_options['math_environment_end']}}}"
+    begin = config_options['math_environment_start']
+    end = config_options['math_environment_end']
     closer = config_options["latex_block_end"]
-    cell.latex_code = "\n".join([opener, begin, latex_block, end, closer]).replace(
-        "\n" + end, end
-    )
+    cell.latex_code = "\n".join(x for x in [opener, begin, latex_block, end, closer] if x)
     return cell
 
 
@@ -1593,12 +1587,13 @@ def format_calc_line(line: CalcLine, **config_options) -> CalcLine:
 
     equals_signs = [idx for idx, char in enumerate(latex_code) if char == "="]
     second_equals = equals_signs[1]  # Change to 1 for second equals
-    latex_code = latex_code.replace("=", "&=")  # Align with ampersands for '\align'
+    ampersand_sign = config_options["ampersand_sign"]
+    latex_code = latex_code.replace("=", ampersand_sign + "=")  # Align with ampersands for '\align'
     comment_space = ""
     comment = ""
     if line.comment:
-        comment_space = "\\;"
-        comment = format_strings(line.comment, comment=True)
+        comment_space = config_options["comment_space"]
+        comment = format_strings(line.comment, comment=True, **config_options)
     line.latex = f"{latex_code[0:second_equals + 1]} {latex_code[second_equals + 2:]} {comment_space} {comment}\n"
     return line
 
@@ -1606,12 +1601,13 @@ def format_calc_line(line: CalcLine, **config_options) -> CalcLine:
 @format_lines.register(NumericCalcLine)
 def format_calc_line(line: NumericCalcLine, **config_options) -> NumericCalcLine:
     latex_code = line.latex
-    latex_code = latex_code.replace("=", "&=")  # Align with ampersands for '\align'
+    ampersand_sign = config_options["ampersand_sign"]
+    latex_code = latex_code.replace("=", ampersand_sign + "=")  # Align with ampersands for '\align'
     comment_space = ""
     comment = ""
     if line.comment:
-        comment_space = "\\;"
-        comment = format_strings(line.comment, comment=True)
+        comment_space = config_options["comment_space"]
+        comment = format_strings(line.comment, comment=True, **config_options)
     line.latex = f"{latex_code} {comment_space} {comment}\n"
     return line
 
@@ -1628,8 +1624,8 @@ def format_conditional_line(line: ConditionalLine, **config_options) -> Conditio
         comment_space = ""
         comment = ""
         if line.comment:
-            comment_space = "\\;"
-            comment = format_strings(line.comment, comment=True)
+            comment_space = config_options["comment_space"]
+            comment = format_strings(line.comment, comment=True, **config_options)
 
         line_break = f"{config_options['line_break']}\n"
         first_line = f"&\\text{a}Since, {b} {latex_condition} : {comment_space} {comment} {line_break}"
@@ -1656,47 +1652,53 @@ def format_long_calc_line(line: LongCalcLine, **config_options) -> LongCalcLine:
     Return line with .latex attribute formatted with line breaks suitable
     for positioning within the "\aligned" latex environment.
     """
-    latex_code = line.latex
-    long_latex = latex_code.replace("=", "\\\\&=")  # Change all...
-    long_latex = long_latex.replace("\\\\&=", "&=", 1)  # ...except the first one
+    long_latex = line.latex
+    ampersand_sign = config_options["ampersand_sign"]
     line_break = f"{config_options['line_break']}\n"
+    long_latex = long_latex.replace("=", "CHANGEALL_PLACEHOLDER") 
+    long_latex = long_latex.replace("CHANGEALL_PLACEHOLDER", ampersand_sign + "=", 1)  # first one without newline character 
+    long_latex = long_latex.replace("CHANGEALL_PLACEHOLDER", line_break + ampersand_sign + "=")  # others are.
     comment_space = ""
     comment = ""
     if line.comment:
-        comment_space = "\\;"
-        comment = format_strings(line.comment, comment=True)
+        comment_space = config_options["comment_space"]
+        comment = format_strings(line.comment, comment=True, **config_options)
     line.latex = f"{long_latex} {comment_space} {comment}{line_break}"
     return line
 
 
 @format_lines.register(ParameterLine)
 def format_param_line(line: ParameterLine, **config_options) -> ParameterLine:
-    comment_space = "\\;"
-    line_break = "\n"
-    if "=" in line.latex:
-        replaced = line.latex.replace("=", "&=")
-        comment = format_strings(line.comment, comment=True)
-        line.latex = f"{replaced} {comment_space} {comment}{line_break}"
+    comment_space = config_options["comment_space"]
+    line_break = config_options["line_break"]
+    latex_code = line.latex
+    ampersand_sign = config_options["ampersand_sign"]
+    if "=" in latex_code:
+        latex_code = latex_code.replace("=", ampersand_sign + "=")
     else:  # To handle sympy symbols displayed alone
-        replaced = line.latex.replace(" ", comment_space)
-        comment = format_strings(line.comment, comment=True)
-        line.latex = f"{replaced} {comment_space} {comment}{line_break}"
+        latex_code = latex_code.replace(" ", comment_space)
+    comment = format_strings(line.comment, comment=True, **config_options)
+    line.latex = f"{latex_code} {comment_space} {comment}{line_break}"
     return line
 
 
 @format_lines.register(SymbolicLine)
 def format_symbolic_line(line: SymbolicLine, **config_options) -> SymbolicLine:
-    replaced = line.latex.replace("=", "&=")
-    comment_space = "\\;"
-    comment = format_strings(line.comment, comment=True)
-    line.latex = f"{replaced} {comment_space} {comment}\n"
+    latex_code = line.latex
+    ampersand_sign = config_options["ampersand_sign"]
+    latex_code = latex_code.replace("=", ampersand_sign + "=")
+    comment_space = config_options["comment_space"]
+    comment = format_strings(line.comment, comment=True, **config_options)
+    line.latex = f"{latex_code} {comment_space} {comment}\n"
     return line
 
 
 @format_lines.register(IntertextLine)
 def format_intertext_line(line: IntertextLine, **config_options) -> IntertextLine:
     cleaned_line = line.line.replace("##", "")
-    line.latex = f"& \\textrm{{{cleaned_line}}}"
+    ampersand_sign = config_options["ampersand_sign"]
+    line.latex = ampersand_sign + config_options["text_env_start"] + "{" + cleaned_line + "}" + config_options["text_env_end"]
+    # f"& \\textrm{{{cleaned_line}}}"
     return line
 
 
@@ -1951,13 +1953,13 @@ def format_strings(string: str, comment: bool, **config_options) -> deque:
     if comment:
         l_par = "("
         r_par = ")"
-        text_env = "\\;\\textrm{"
-        end_env = "}"
+        text_env = config_options["comment_space"] + config_options["text_env_start"]
+        end_env = config_options["text_env_end"]
     else:
         l_par = ""
         r_par = ""
-        text_env = "\\textrm{"
-        end_env = "}"
+        text_env = config_options["text_env_start"]
+        end_env = config_options["text_env_end"]
 
     return "".join([text_env, l_par, string.strip().rstrip(), r_par, end_env])
 
@@ -3048,8 +3050,8 @@ def swap_long_var_strs(pycode_as_deque: deque, **config_options) -> deque:
     ***Must be just before swap_subscripts in stack.***
     """
     swapped_deque = deque([])
-    begin = "\\mathrm{"
-    end = "}"
+    begin = config_options["math_default_functions_start"]
+    end = config_options["math_default_functions_end"]
     for item in pycode_as_deque:
         if isinstance(item, deque):
             new_item = swap_long_var_strs(item, **config_options)
